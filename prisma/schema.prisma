@@ -1,0 +1,106 @@
+
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id                   Int      @id @default(autoincrement())
+  firstName            String
+  lastName             String
+  firstNameKana        String
+  lastNameKana         String
+  middleName           String
+  email                String   @unique
+  postCode             String
+  prefecture           String
+  city                 String
+  aza                  String
+  building             String
+  tel                  String
+  hashedPassword       String
+  createdAt            DateTime @default(now())
+  updatedAt            DateTime @updatedAt
+
+  Favorite              Favorite[]
+  Cart                  Cart[]
+  SubscriptionCart      SubscriptionCart[]
+  Subscription          Subscription[]
+  SubscriptionHistories SubscriptionHistories[]
+}
+
+model Item {
+  id          Int     @id @default(autoincrement())
+  imageUrl    String
+  name        String
+  category    String
+  flavor String[]
+  price       Int
+  description String?
+  content     String?
+}
+
+model Favorite {
+  id        Int      @id @default(autoincrement())
+  itemId Int[]
+  userId    Int
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model Cart {
+  id       Int    @id @default(autoincrement())
+  userId   Int
+  itemId   Int
+  imageUrl String
+  name     String
+  price    Int
+  countity Int
+  user     User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
+
+model SubscriptionCart {
+  id       Int    @id @default(autoincrement())
+  userId   Int
+  itemId   Int
+  imageUrl String
+  flavor   String
+  name     String
+  price    Int
+  countity Int
+  user     User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
+
+model Subscription {
+  id        Int      @id @default(autoincrement())
+  userId    Int
+  itemId    Int
+  imageUrl  String
+  flavor    String
+  name      String
+  price     Int
+  countity  Int
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  createdAt DateTime @default(now())
+}
+
+model SubscriptionHistories {
+  id        Int      @id @default(autoincrement())
+  userId    Int
+  itemId    Int
+  imageUrl  String
+  flavor    String
+  name      String
+  price     Int
+  countity  Int
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  createdAt DateTime @default(now())
+}
