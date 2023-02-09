@@ -13,16 +13,18 @@ export class UserController {
 
   // ログインしているユーザーのオブジェクトを取得
   @Get()
-  getLoginUser(@Req() req: Request): Omit<User, 'hashedPassword'> {
+  getLoginUser(@Req() req: Request) {
     return req.user;
   }
 
+  // : Omit<User, 'hashedPassword'>
+
   // ユーザー情報アップデート
-  @Patch()
-  updateUser(
-    @Req() req: Request,
-    @Body() dto: UpdateUserDto,
-  ): Promise<Omit<User, 'hashedPassword'>> {
-    return this.userService.updateUser(req.user.id, dto);
-  }
+  // @Patch()
+  // updateUser(
+  //   @Req() req: Request,
+  //   @Body() dto: UpdateUserDto,
+  // ): Promise<Omit<User, 'hashedPassword'>> {
+  //   return this.userService.updateUser(req.user.id, dto);
+  // }
 }

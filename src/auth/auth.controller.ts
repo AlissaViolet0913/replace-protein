@@ -27,6 +27,7 @@ export class AuthController {
   // ユーザーを新規登録
   @Post('signup')
   signUp(@Body() dto: AuthDto): Promise<Msg> {
+    console.log('signUp');
     return this.authService.signUp(dto);
   }
 

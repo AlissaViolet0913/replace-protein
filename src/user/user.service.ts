@@ -7,7 +7,7 @@ import { User } from '@prisma/client';
 export class UserService {
   constructor(private prisma: PrismaService) {}
 
-  // ニックネームの内容を更新
+  // ユーザー情報内容を更新
   async updateUser(
     userId: number,
     dto: UpdateUserDto,

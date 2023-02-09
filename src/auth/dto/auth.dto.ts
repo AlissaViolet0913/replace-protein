@@ -3,6 +3,7 @@
 import {
   IsEmail,
   IsNotEmpty,
+  IsOptional,
   IsString,
   MaxLength,
   MinLength,
@@ -36,6 +37,7 @@ export class AuthDto {
   lastNameKana: string;
 
   @IsString()
+  @IsOptional()
   middleName: string;
 
   @IsString()

@@ -11,6 +11,6 @@ async function bootstrap() {
     origin: ['http://localhost:3000'],
   });
   app.use(cookieParser());
-  await app.listen(3006);
+  await app.listen(3005);
 }
 bootstrap();
