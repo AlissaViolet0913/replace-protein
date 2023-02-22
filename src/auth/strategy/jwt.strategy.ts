@@ -1,64 +1,60 @@
-// JWTをカスタマイズするためのJWPstrategyを作成
-// AuthGuardがJWPのプロテクションの機能を提供。
-// JWPがcookieやヘッダーに含まれる場合やJWTのsecretキー（何になるかはプロジェクトによって変わる）は、オプションをつけてカスタマイズしておく必要あり
 import { Injectable } from '@nestjs/common';
+import { UnauthorizedException } from '@nestjs/common/exceptions';
 import { ConfigService } from '@nestjs/config';
 import { PassportStrategy } from '@nestjs/passport';
 import { ExtractJwt, Strategy } from 'passport-jwt';
 import { PrismaService } from '../../prisma/prisma.service';
 
+// jwtFromRequestを使ってtokenを取得し、secretOrKeyを使ってtokenを検証。
+// validateメソッドでTokenのpayload(ペイロード)が有効であることを検証
+
+// JWTをカスタマイズする（super()の引数にjwtFromrequest:jwt、ignoreExpiration, secretOrKeyの3つが入っている）
 @Injectable()
-// PassportStrategy:抽象クラス、抽象メソッドとしてvalidateが定義されている。（GITHUBで確認）
 export class JwtStrategy extends PassportStrategy(Strategy, 'jwt') {
   constructor(
     private readonly config: ConfigService,
     private readonly prisma: PrismaService,
   ) {
-    // 継承しているPassportStrategyのconstructorの処理を参照
+    // super()＝PassportStrategyクラスのconstructor()？？？
     super({
-      // jwtFromRequestオプション：JWTの検証でリクエストのどこにJWTが格納されているのか指定
+      // JWTの抽出
       jwtFromRequest: ExtractJwt.fromExtractors([
-        // cookieの中からJWTを取り出す処理
-        // jwt変数をセットし、クライアントからのリクエストとさらにその中にcookieが含まれている場合は、access_tokenというcookieにアクセスして値を取り出す
-        // jwtにその値を格納して返す
         (req) => {
           let jwt = null;
+          // &&:全てがtrueのときのみtrueになる
           if (req && req.cookies) {
             jwt = req.cookies['access_token'];
           }
           return jwt;
         },
       ]),
-      //   ignoreExpiration: trueにするとJWTの有効期限が切れていても有効になってしまう
+      // 有効期限を無視しない
       ignoreExpiration: false,
-      //   JWTを生成するのにしようしたsecretのキーを指定
-      //   環境変数に格納しているため、configサービスのGETメソッドを使ってsecretを取り出してこのオプションに渡す
+      // envファイルから秘密鍵を渡す（configservice.get()で環境変数を取得）
       secretOrKey: config.get('JWT_SECRET'),
     });
   }
-  // validateの実装
-  //   payloadはauth.serviceのところでJWTを生成する際に使用されたもの
-  //   JWTはpayloadとsecretキーをあるアルゴリズムにかけることで生成
-  // 逆にJWT Tokenとsecretキーが分かればpauloadの復元が可能⇒これをやっているのがこのページ
-  // JWTが正しいものか検証を行い
-  //   受け取ったJWTとsecretKeyで復元したpayloadがvalidateのメソッドに渡される
-  //   sub：userIdが格納されている、これを使ってprisma経由でこのidに一致するユーザー情報を取得
-
+  // payloadを使ったバリデーション処理の実行
+  // payloadはauth.serviceのloginところで(JWTを生成する際に使用された)定義された値
+  // ログイン時JWT生成した時に使用したuserIdと一致するuserを探す
   async validate(payload: { sub: number; email: string }) {
     const user = await this.prisma.user.findUnique({
       where: {
         id: payload.sub,
       },
     });
-    // hashedpasswordの属性をっ削除してからreturnでユーザーオブジェクトを返す
+    if (!user) {
+      throw new UnauthorizedException('ユーザーの認証に失敗しました');
+    }
     delete user.hashedPassword;
     return user;
   }
 }
 
 // AuthGuard：validateのメソッドの返り値のユーザーオブジェクト（JWTを解析）
+// AuthGuardとは、認証しているか判定していない場合はサインイン画面に遷移させたりする機能のこと
+
 // ＝ログインしているユーザーのユーザーオブジェクトをreturnで返してくれる
 // このユーザーオブジェクトを自動的にリクエストに含めてくれる
-// user.controllerはリクエストにアクセス⇒ユーザーんオブジェクトを取り出す
 //
 // このInjektableを使用できるようにするにはauth.module.tsに追記が必要

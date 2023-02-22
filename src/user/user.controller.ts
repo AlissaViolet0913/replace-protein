@@ -1,10 +1,18 @@
 // JWTの認証をかけて有効なJWTがリクエストの中に含まれていればログインしているユーザーのユーザー情報を返すエンドポイント
+// user.controllerはリクエストにアクセス⇒ユーザーオブジェクトを取り出す
 import { Body, Controller, Get, Patch, Req, UseGuards } from '@nestjs/common';
 import { AuthGuard } from '@nestjs/passport';
 import { Request } from 'express';
 import { UserService } from './user.service';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { User } from '@prisma/client';
+
+// jwt.strategy.tsのJwtStrategy.validate()が実行される
+// userルートを要求したときに認証を強制
+// Nest.jsで認証を導入する場合ではGuardを使用
+// ガード（Guard）とは、条件分岐のような意味を持つもので、処理を続けるためにはtrueと評価しなければならない式（認証成功時のみcontrollerの実施）
+// AuthGuard＝Authorization guard。リクエストの認証と認可を実現するためのクラス
+// useGuardsはミドルウェア。このミドルウェアにJWTtokenベースの認証を使用するためにインスタンス化して組み込んでいる
 
 @UseGuards(AuthGuard('jwt'))
 @Controller('user')
@@ -13,18 +21,17 @@ export class UserController {
 
   // ログインしているユーザーのオブジェクトを取得
   @Get()
-  getLoginUser(@Req() req: Request) {
+  getLoginUser(@Req() req: Request): Omit<User, 'hashedPassword'> {
+    // console.log(req);
     return req.user;
   }
 
-  // : Omit<User, 'hashedPassword'>
-
   // ユーザー情報アップデート
-  // @Patch()
-  // updateUser(
-  //   @Req() req: Request,
-  //   @Body() dto: UpdateUserDto,
-  // ): Promise<Omit<User, 'hashedPassword'>> {
-  //   return this.userService.updateUser(req.user.id, dto);
-  // }
+  @Patch()
+  updateUser(
+    @Req() req: Request,
+    @Body() dto: UpdateUserDto,
+  ): Promise<Omit<User, 'hashedPassword'>> {
+    return this.userService.updateUser(req.user.id, dto);
+  }
 }

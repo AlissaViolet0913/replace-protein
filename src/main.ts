@@ -10,6 +10,7 @@ async function bootstrap() {
     credentials: true,
     origin: ['http://localhost:3000'],
   });
+  // nestJSでリクエストのcookieを利用する
   app.use(cookieParser());
   await app.listen(3005);
 }

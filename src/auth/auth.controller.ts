@@ -11,6 +11,7 @@ import {
 import { Request, Response } from 'express';
 import { AuthService } from './auth.service';
 import { AuthDto } from './dto/auth.dto';
+import { LoginDto } from './dto/login.dto';
 import { Csrf, Msg } from './interfaces/auth.interface';
 
 @Controller('auth')
@@ -24,7 +25,7 @@ export class AuthController {
     return { csrfToken: req.csrfToken() };
   }
 
-  // ユーザーを新規登録
+  // ユーザー新規登録
   @Post('signup')
   signUp(@Body() dto: AuthDto): Promise<Msg> {
     console.log('signUp');
@@ -35,7 +36,7 @@ export class AuthController {
   @HttpCode(HttpStatus.OK)
   @Post('login')
   async login(
-    @Body() dto: AuthDto,
+    @Body() dto: LoginDto,
     @Res({ passthrough: true }) res: Response,
   ): Promise<Msg> {
     const jwt = await this.authService.login(dto);
@@ -46,10 +47,11 @@ export class AuthController {
       path: '/',
     });
     return {
-      message: 'ok',
+      message: 'success',
     };
   }
 
+  // ログアウト
   @HttpCode(HttpStatus.OK)
   @Post('/logout')
   logout(@Req() req: Request, @Res({ passthrough: true }) res: Response): Msg {

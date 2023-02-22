@@ -22,6 +22,10 @@ export class AuthDto {
 
   @IsString()
   @IsNotEmpty()
+  passwordConfirmation: string;
+
+  @IsString()
+  @IsNotEmpty()
   firstName: string;
 
   @IsString()
@@ -63,8 +67,4 @@ export class AuthDto {
   @IsString()
   @IsNotEmpty()
   tel: string;
-
-  @IsString()
-  @IsNotEmpty()
-  passwordConfirmation: string;
 }
