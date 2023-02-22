@@ -5,18 +5,18 @@ import { JwtService } from '@nestjs/jwt';
 import * as bcrypt from 'bcrypt';
 import { PrismaService } from 'src/prisma/prisma.service';
 import { AuthDto } from './dto/auth.dto';
+import { LoginDto } from './dto/login.dto';
 import { Msg, Jwt } from './interfaces/auth.interface';
 
 @Injectable()
 export class AuthService {
   constructor(
-    // PrismaServiceをDI
     private readonly prisma: PrismaService,
     private readonly jwt: JwtService,
     private readonly config: ConfigService,
   ) {}
 
-  // ユーザー新規作成
+  // ユーザー新規作成機能
   async signUp(dto: AuthDto): Promise<Msg> {
     console.log(dto);
     const hashed = await bcrypt.hash(dto.password, 12);
@@ -39,7 +39,7 @@ export class AuthService {
         },
       });
       return {
-        message: 'ok',
+        message: 'done',
       };
     } catch (error) {
       if (error instanceof PrismaClientKnownRequestError) {
@@ -52,20 +52,23 @@ export class AuthService {
     }
   }
 
-  async login(dto: AuthDto): Promise<Jwt> {
+  // ログイン機能
+  async login(dto: LoginDto): Promise<Jwt> {
     const user = await this.prisma.user.findFirst({
       where: {
         email: dto.email,
       },
     });
 
-    if (!user) throw new ForbiddenException('Email or password incorrect');
-    const isValid = await bcrypt.compare(dto.password, user.hashedPassword);
+    if (!user) throw new ForbiddenException("you don't have your accountt");
 
+    // ハッシュ化されたパスワードと、入力されたパスワードが一致しなかったら、エラーを出す
+    const isValid = await bcrypt.compare(dto.password, user.hashedPassword);
     if (!isValid) throw new ForbiddenException('Email or password incorrect');
     return this.generateJwt(user.id, user.email);
   }
 
+  // ログイン時にJWT生成機能
   async generateJwt(userId: number, email: string): Promise<Jwt> {
     const payload = {
       sub: userId,
@@ -76,6 +79,7 @@ export class AuthService {
       expiresIn: '120m',
       secret: secret,
     });
+    console.log(token);
     return {
       accessToken: token,
     };
