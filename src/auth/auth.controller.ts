@@ -39,15 +39,22 @@ export class AuthController {
     @Body() dto: LoginDto,
     @Res({ passthrough: true }) res: Response,
   ): Promise<Msg> {
-    const jwt = await this.authService.login(dto);
-    res.cookie('access_token', jwt.accessToken, {
+    const id = await this.authService.login(dto);
+    res.cookie('access_token', id.accessToken, {
       httpOnly: true,
       secure: true,
       sameSite: 'none',
       path: '/',
+      // maxAge: 86400,
     });
+    const userIdToken = id.accessToken;
+    res.setHeader('Set-Cookie', [
+      `id=${userIdToken.id}; max-age=86400; path=/`,
+      // max-age保持させる期限
+    ]);
+    console.log(userIdToken);
     return {
-      message: 'success',
+      message: 'login success',
     };
   }
 
@@ -63,7 +70,7 @@ export class AuthController {
       path: '/',
     });
     return {
-      message: 'ok',
+      message: 'logout success',
     };
   }
 }

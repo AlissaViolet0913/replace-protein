@@ -3,7 +3,6 @@ import { PrismaClientKnownRequestError } from '@prisma/client/runtime';
 import { Msg } from 'src/auth/interfaces/auth.interface';
 import { PrismaService } from 'src/prisma/prisma.service';
 import { ItemDto } from './dto/itemup.dto';
-import { paramsDto } from './dto/params.dto';
 
 @Injectable()
 export class ItemService {
