@@ -14,17 +14,20 @@ import { User } from '@prisma/client';
 // AuthGuard＝Authorization guard。リクエストの認証と認可を実現するためのクラス
 // useGuardsはミドルウェア。このミドルウェアにJWTtokenベースの認証を使用するためにインスタンス化して組み込んでいる
 
-@UseGuards(AuthGuard('jwt'))
+// @UseGuards(AuthGuard('jwt'))
 @Controller('user')
 export class UserController {
   constructor(private readonly userService: UserService) {}
 
   // ログインしているユーザーのオブジェクトを取得
   @Get()
-  getLoginUser(@Req() req: Request): Omit<User, 'hashedPassword'> {
-    // console.log(req);
-    return req.user;
+  getLoginUser(@Req() req: Request) {
+    console.log(req.cookies);
+    const idToNumber = Number(req.cookies.id);
+    console.log(idToNumber);
+    return this.userService.getLoginUser(idToNumber);
   }
+  // : Omit<User, 'hashedPassword'>
 
   // ユーザー情報アップデート
   @Patch()
@@ -32,6 +35,8 @@ export class UserController {
     @Req() req: Request,
     @Body() dto: UpdateUserDto,
   ): Promise<Omit<User, 'hashedPassword'>> {
-    return this.userService.updateUser(req.user.id, dto);
+    const idToNumber = Number(req.cookies.id);
+    console.log(idToNumber);
+    return this.userService.updateUser(idToNumber, dto);
   }
 }

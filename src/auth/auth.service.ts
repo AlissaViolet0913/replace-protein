@@ -1,7 +1,7 @@
 import { Injectable, ForbiddenException } from '@nestjs/common';
 import { PrismaClientKnownRequestError } from '@prisma/client/runtime';
 import { ConfigService } from '@nestjs/config';
-import { JwtService } from '@nestjs/jwt';
+// import { JwtService } from '@nestjs/jwt';
 import * as bcrypt from 'bcrypt';
 import { PrismaService } from 'src/prisma/prisma.service';
 import { AuthDto } from './dto/auth.dto';
@@ -12,7 +12,7 @@ import { Msg, Jwt } from './interfaces/auth.interface';
 export class AuthService {
   constructor(
     private readonly prisma: PrismaService,
-    private readonly jwt: JwtService,
+    // private readonly jwt: JwtService,
     private readonly config: ConfigService,
   ) {}
 
@@ -53,7 +53,8 @@ export class AuthService {
   }
 
   // ログイン機能
-  async login(dto: LoginDto): Promise<Jwt> {
+  // : Promise<Jwt>
+  async login(dto: LoginDto) {
     const user = await this.prisma.user.findFirst({
       where: {
         email: dto.email,
@@ -65,23 +66,34 @@ export class AuthService {
     // ハッシュ化されたパスワードと、入力されたパスワードが一致しなかったら、エラーを出す
     const isValid = await bcrypt.compare(dto.password, user.hashedPassword);
     if (!isValid) throw new ForbiddenException('Email or password incorrect');
-    return this.generateJwt(user.id, user.email);
+    return this.generatePayload(user.id);
   }
+  // this.generateJwt(user.id, user.email);
 
-  // ログイン時にJWT生成機能
-  async generateJwt(userId: number, email: string): Promise<Jwt> {
+  async generatePayload(id: number) {
     const payload = {
-      sub: userId,
-      email,
+      id: id,
     };
-    const secret = this.config.get('JWT_SECRET');
-    const token = await this.jwt.signAsync(payload, {
-      expiresIn: '120m',
-      secret: secret,
-    });
-    console.log(token);
     return {
-      accessToken: token,
+      accessToken: payload,
     };
   }
 }
+
+// ログイン時にJWT生成機能
+// async generateJwt(userId: number, email: string): Promise<Jwt> {
+//   const payload = {
+//     sub: userId,
+//     email,
+//   };
+//   const secret = this.config.get('JWT_SECRET');
+//   const token = await this.jwt.signAsync(payload, {
+//     expiresIn: '120m',
+//     secret: secret,
+//   });
+//   console.log(token);
+//   console.log(payload);
+//   return {
+//     accessToken: token,
+//   };
+// }
