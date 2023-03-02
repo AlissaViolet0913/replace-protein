@@ -1,7 +1,9 @@
-import { IsOptional } from 'class-validator';
+import { IsNotEmpty, IsArray } from 'class-validator';
+import { Type } from 'class-transformer';
 
 export class IntoFavoriteDto {
-  userId?: number;
-  itemIdFav?: number;
-  id: number;
+  @IsNotEmpty()
+  @Type(() => Number)
+  @IsArray()
+  itemId?: number[];
 }

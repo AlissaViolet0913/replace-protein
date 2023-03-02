@@ -48,9 +48,9 @@ model Item {
 }
 
 model Favorite {
-  id        Int      @id @default(autoincrement())
+  id        Float    @unique   
   itemId Int[]
-  userId    Int
+  userId    Int      
   user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
@@ -58,7 +58,7 @@ model Favorite {
 
 model Cart {
   id       Int    @id @default(autoincrement())
-  userId   Int
+  userId   Int    
   itemId   Int
   imageUrl String
   name     String
@@ -69,7 +69,7 @@ model Cart {
 
 model SubscriptionCart {
   id       Int    @id @default(autoincrement())
-  userId   Int
+  userId   Int    
   itemId   Int
   imageUrl String
   flavor   String

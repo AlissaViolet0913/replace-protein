@@ -19,7 +19,14 @@ export class AuthService {
   // ユーザー新規作成機能
   async signUp(dto: AuthDto): Promise<Msg> {
     console.log(dto);
-    const hashed = await bcrypt.hash(dto.password, 12);
+    let hashed = '';
+    if (dto.password === dto.passwordConfirmation) {
+      hashed = await bcrypt.hash(dto.password, 12);
+    } else {
+      throw new ForbiddenException(
+        'password and passwordConfimation are diffent',
+      );
+    }
     try {
       await this.prisma.user.create({
         data: {
