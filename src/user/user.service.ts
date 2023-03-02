@@ -1,7 +1,12 @@
-import { Injectable, UnauthorizedException } from '@nestjs/common';
+import {
+  Injectable,
+  UnauthorizedException,
+  ForbiddenException,
+} from '@nestjs/common';
 import { PrismaService } from 'src/prisma/prisma.service';
 import { UpdateUserDto } from './dto/update-user.dto';
-import { User } from '@prisma/client';
+import * as bcrypt from 'bcrypt';
+import { Msg } from 'src/auth/interfaces/auth.interface';
 
 @Injectable()
 export class UserService {
@@ -21,20 +26,39 @@ export class UserService {
   }
 
   // ユーザー情報内容を更新
-  async updateUser(
-    userId: number,
-    dto: UpdateUserDto,
-  ): Promise<Omit<User, 'hashedPassword'>> {
+  // : Promise<Omit<User, 'hashedPassword'>>
+  async updateUser(userId: number, dto: UpdateUserDto): Promise<Msg> {
+    let hashed = '';
+    if (dto.password === dto.passwordConfirmation) {
+      hashed = await bcrypt.hash(dto.password, 12);
+    } else {
+      throw new ForbiddenException(
+        'password and passwordConfimation are diffent',
+      );
+    }
     const user = await this.prisma.user.update({
       where: {
         id: userId,
       },
       data: {
-        ...dto,
+        email: dto.email,
+        hashedPassword: hashed,
+        firstName: dto.firstName,
+        lastName: dto.lastName,
+        firstNameKana: dto.firstNameKana,
+        lastNameKana: dto.lastNameKana,
+        middleName: dto.middleName,
+        postCode: dto.postCode,
+        prefecture: dto.prefecture,
+        city: dto.city,
+        aza: dto.aza,
+        building: dto.building,
+        tel: dto.tel,
       },
     });
-
     delete user.hashedPassword;
-    return user;
+    return {
+      message: 'done',
+    };
   }
 }

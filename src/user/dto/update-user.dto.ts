@@ -7,7 +7,7 @@ export class UpdateUserDto {
   @IsOptional()
   firstName?: string;
   lastName?: string;
-  firsrNameKana?: string;
+  firstNameKana?: string;
   lastNameKana?: string;
   middleName?: string;
   email?: string;
@@ -17,4 +17,6 @@ export class UpdateUserDto {
   aza?: string;
   building?: string;
   tel?: string;
+  password?: string;
+  passwordConfirmation?: string;
 }
