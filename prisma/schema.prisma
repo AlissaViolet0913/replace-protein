@@ -49,7 +49,7 @@ model Item {
 
 model Favorite {
   id        Float    @unique   
-  itemId Int[]
+  itemId    Int
   userId    Int      
   user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
   createdAt DateTime @default(now())
@@ -57,12 +57,9 @@ model Favorite {
 }
 
 model Cart {
-  id       Int    @id @default(autoincrement())
+  id       Float     @unique
   userId   Int    
   itemId   Int
-  imageUrl String
-  name     String
-  price    Int
   countity Int
   user     User   @relation(fields: [userId], references: [id], onDelete: Cascade)
 }
@@ -82,7 +79,7 @@ model SubscriptionCart {
 model Subscription {
   id        Int      @id @default(autoincrement())
   userId    Int
-  itemId    Int
+  item      Json
   imageUrl  String
   flavor    String
   name      String
@@ -92,15 +89,18 @@ model Subscription {
   createdAt DateTime @default(now())
 }
 
+
 model SubscriptionHistories {
   id        Int      @id @default(autoincrement())
   userId    Int
-  itemId    Int
-  imageUrl  String
-  flavor    String
-  name      String
-  price     Int
-  countity  Int
+  item      Json
   user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  createdAt DateTime @default(now())
+}
+
+model PurchaseHistories {
+  id        Int      @id @default(autoincrement())
+  userId    Int
+  item      Json
   createdAt DateTime @default(now())
 }
