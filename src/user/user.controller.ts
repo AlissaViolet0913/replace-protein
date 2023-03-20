@@ -31,10 +31,7 @@ export class UserController {
 
   // ユーザー情報アップデート
   @Patch()
-  updateUser(
-    @Req() req: Request,
-    @Body() dto: UpdateUserDto,
-  ): Promise<Omit<User, 'hashedPassword'>> {
+  updateUser(@Req() req: Request, @Body() dto: UpdateUserDto) {
     const idToNumber = Number(req.cookies.id);
     console.log(idToNumber);
     return this.userService.updateUser(idToNumber, dto);
