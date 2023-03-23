@@ -1,6 +1,5 @@
 import { Injectable } from '@nestjs/common';
 import { UnauthorizedException } from '@nestjs/common/exceptions';
-import { CartService } from 'src/cart/cart.service';
 import { PrismaService } from 'src/prisma/prisma.service';
 import { IntoPurchaseDto } from './dto/into-purchase';
 

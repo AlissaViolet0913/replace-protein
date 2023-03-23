@@ -1,6 +1,6 @@
 import { IsNotEmpty } from 'class-validator';
 
-export class IntoPurchaseDto {
+export class IntoSubscriptionHtDto {
   @IsNotEmpty()
   item?: object;
 }
