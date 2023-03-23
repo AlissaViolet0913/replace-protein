@@ -10,7 +10,6 @@ export class PurchaseController {
   @Post()
   updatePurchase(@Req() req: Request, @Body() dto: IntoPurchaseDto) {
     const idToNumber = Number(req.cookies.id);
-    // const dtoToJson = JSON.stringify(dto);
     return this.purchaseService.intoPurchaseData(idToNumber, dto);
   }
 

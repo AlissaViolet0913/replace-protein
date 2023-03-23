@@ -68,10 +68,6 @@ model SubscriptionCart {
   id       Int    @id @default(autoincrement())
   userId   Int    
   itemId   Int
-  imageUrl String
-  flavor   String
-  name     String
-  price    Int
   countity Int
   user     User   @relation(fields: [userId], references: [id], onDelete: Cascade)
 }
@@ -79,11 +75,7 @@ model SubscriptionCart {
 model Subscription {
   id        Int      @id @default(autoincrement())
   userId    Int
-  item      Json
-  imageUrl  String
-  flavor    String
-  name      String
-  price     Int
+  itemId　　Int
   countity  Int
   user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
   createdAt DateTime @default(now())
