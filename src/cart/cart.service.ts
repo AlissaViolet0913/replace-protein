@@ -28,7 +28,6 @@ export class CartService {
         countity: toNumberCountity,
       },
     });
-
     return cart;
   }
 
@@ -42,7 +41,8 @@ export class CartService {
       throw new UnauthorizedException('ユーザー情報の取得に失敗しました');
     }
     console.log(cartUser);
-    return cartUser.map((item) => item.itemId);
+    return cartUser;
+    // return cartUser.map((item) => item.itemId);
   }
 
   async deleteCart(userId: number, dto: DeleteCartDto): Promise<void> {

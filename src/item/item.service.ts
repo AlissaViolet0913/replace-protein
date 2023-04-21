@@ -2,13 +2,15 @@ import { ForbiddenException, Injectable } from '@nestjs/common';
 import { PrismaClientKnownRequestError } from '@prisma/client/runtime';
 import { Msg } from 'src/auth/interfaces/auth.interface';
 import { PrismaService } from 'src/prisma/prisma.service';
+import { CategoryDto } from '../search/dto/category.dto';
+import { FlavorDto } from '../search/dto/flavor.dto';
 import { ItemDto } from './dto/itemup.dto';
 
 @Injectable()
 export class ItemService {
   constructor(private readonly prisma: PrismaService) {}
 
-  // 商品情報取得
+  // 商品詳細情報取得
   async itemDetail(paramsId: number) {
     const detail = await this.prisma.item.findFirst({
       where: {
@@ -17,6 +19,16 @@ export class ItemService {
     });
     if (!detail) throw new ForbiddenException("the item isn't exist.");
     return detail;
+  }
+
+  // 商品情報を全て取得
+  async itemAll() {
+    const allItems = await this.prisma.item.findMany();
+    if (!allItems) {
+      console.log('Items not found');
+    }
+    console.log(allItems);
+    return allItems;
   }
 
   // 商品情報追加
