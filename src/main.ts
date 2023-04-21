@@ -8,6 +8,8 @@ async function bootstrap() {
   // app.useGlobalPipes(new ValidationPipe({ whitelist: true }));
   app.enableCors({
     credentials: true,
+    // リクエストを許可するHTTPメソッド(何も指定していない場合、GETとHEADのみが許可される)
+    methods: 'GET,HEAD,PUT,PATCH,POST,DELETE',
     origin: ['http://localhost:3000'],
   });
   // nestJSでリクエストのcookieを利用する

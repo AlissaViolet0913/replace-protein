@@ -38,7 +38,7 @@ export class AuthController {
   async login(
     @Body() dto: LoginDto,
     @Res({ passthrough: true }) res: Response,
-  ): Promise<Msg> {
+  ) {
     const id = await this.authService.login(dto);
     res.cookie('access_token', id.accessToken, {
       httpOnly: true,
@@ -53,9 +53,10 @@ export class AuthController {
       // max-age保持させる期限
     ]);
     console.log(userIdToken);
-    return {
-      message: 'login success',
-    };
+    // return {
+    //   message: 'login success',
+    // };
+    return userIdToken.id;
   }
 
   // ログアウト

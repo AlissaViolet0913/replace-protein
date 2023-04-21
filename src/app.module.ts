@@ -10,6 +10,7 @@ import { FavoriteModule } from './favorite/favorite.module';
 import { PurchaseModule } from './purchase/purchase.module';
 import { ItemModule } from './item/item.module';
 import { SubscriptionModule } from './subscription/subscription.module';
+import { SearchModule } from './search/search.module';
 
 @Module({
   imports: [
@@ -22,6 +23,7 @@ import { SubscriptionModule } from './subscription/subscription.module';
     PurchaseModule,
     ItemModule,
     SubscriptionModule,
+    SearchModule,
   ],
   controllers: [AppController],
   providers: [AppService],
