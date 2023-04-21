@@ -26,7 +26,7 @@ export class AuthController {
   }
 
   // ユーザー新規登録
-  @Post('signup')
+  @Post('/signup')
   signUp(@Body() dto: AuthDto): Promise<Msg> {
     console.log('signUp');
     return this.authService.signUp(dto);
@@ -34,7 +34,7 @@ export class AuthController {
 
   //  ログイン
   @HttpCode(HttpStatus.OK)
-  @Post('login')
+  @Post('/login')
   async login(
     @Body() dto: LoginDto,
     @Res({ passthrough: true }) res: Response,
